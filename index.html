@@ -195,46 +195,39 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const modal = document.getElementById('adModal');
-        const closeBtn = modal.querySelector('.close-btn');
+    const modal = document.getElementById('adModal');
+    const closeBtn = modal.querySelector('.close-btn');
 
-        // Function to check if the ad should be shown
-        function shouldShowAd() {
-            const lastShown = localStorage.getItem('adLastShown');
-            const sessionShown = sessionStorage.getItem('adSessionShown');
+    function shouldShowAd() {
+        const lastShown = localStorage.getItem('adLastShown');
+        if (!lastShown) return true; // Show ad if no record exists
 
-            if (sessionShown) return false; // Prevent ad from showing again in this session
+        const now = Date.now();
+        const lastShownTime = parseInt(lastShown);
+        const timeDifference = now - lastShownTime;
 
-            if (!lastShown) return true; // Show ad if no record exists
+        const fiveMinutes = 5 * 60 * 1000;
+        return timeDifference > fiveMinutes; // Show ad if 5 minutes have passed
+    }
 
-            const lastShownTime = new Date(parseInt(lastShown));
-            const now = new Date();
-            const timeDifference = now - lastShownTime; // Difference in milliseconds
+    if (shouldShowAd()) {
+        setTimeout(() => {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }, 1000);
+    }
 
-            const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
-            return timeDifference > fiveMinutes; // Show ad only if 5 minutes have passed
-        }
+    function closeModal() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        localStorage.setItem('adLastShown', Date.now()); // Store timestamp
+    }
 
-        // Show modal if it should be displayed
-        if (shouldShowAd()) {
-            setTimeout(() => {
-                modal.style.display = 'flex';
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
-                sessionStorage.setItem('adSessionShown', 'true'); // Store session flag
-            }, 1000);
-        }
+    closeBtn.addEventListener('click', closeModal);
+    window.addEventListener('click', (e) => e.target === modal && closeModal());
+    window.addEventListener('keydown', (e) => e.key === 'Escape' && closeModal());
+});
 
-        function closeModal() {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restore scrolling
-            localStorage.setItem('adLastShown', Date.now().toString()); // Save timestamp
-        }
-
-        // Event listeners
-        closeBtn.addEventListener('click', closeModal);
-        window.addEventListener('click', (e) => e.target === modal && closeModal());
-        window.addEventListener('keydown', (e) => e.key === 'Escape' && closeModal());
-    });
 </script>
 
     <!-- Bootstrap JS and dependencies (Popper.js) -->
