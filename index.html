@@ -133,6 +133,94 @@
         </div>
     </footer>
 
+    <!-- Advertisement Modal -->
+<div id="adModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" aria-label="Close Modal">&times;</span>
+        <img src="ad1.jpg" alt="Advertisement" class="ad-image">
+    </div>
+</div>
+
+<style>
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        position: relative;
+        background: white;
+        padding: 1px;
+        border-radius: 1px;
+        max-width: 70%;
+        max-height: 70%;
+        box-shadow: 0 5px 15px rgba(54, 54, 54, 0.168);
+        text-align: center;
+    }
+
+    /* Close Button Styling */
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        color: #000;
+        font-size: 32px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .close-btn:hover {
+        color: rgb(91, 221, 82);
+        transform: scale(1.2);
+    }
+
+    .ad-image {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
+</style>
+
+<script>
+    // JavaScript for Advertisement Modal
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('adModal');
+        const closeBtn = modal.querySelector('.close-btn');
+
+        // Show modal only if not seen in current session
+        if (!sessionStorage.getItem('adModalShown')) {
+            setTimeout(() => {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }, 1000);
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restore scrolling
+            sessionStorage.setItem('adModalShown', 'true'); // Hide modal for this session
+        }
+
+        // Event listeners
+        closeBtn.addEventListener('click', closeModal);
+        window.addEventListener('click', (e) => e.target === modal && closeModal());
+        window.addEventListener('keydown', (e) => e.key === 'Escape' && closeModal());
+    });
+</script>
+
+
+
     <!-- Bootstrap JS and dependencies (Popper.js) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Animate.css for Animations -->
