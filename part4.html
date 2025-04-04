@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux Practice Guide - Part 4</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+        }
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+        nav a:hover {
+            background-color: #575757;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #4CAF50;
+        }
+        .copy-btn:hover {
+            color: #45a049;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .image-placeholder {
+            background-color: #ddd;
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🐧 Linux Practice Guide</h1>
+    </header>
+
+    <nav>
+        <a href="part1.html">Local Backup</a>
+        <a href="part2.html">Remote Backup</a>
+        <a href="part3.html">Btrfs Snapshot</a>
+        <a href="part4.html">Centralized Logging</a>
+        <a href="part5.html">LUKS Encryption</a>
+    </nav>
+
+    <div class="container">
+        <div class="section" id="centralized-logging">
+            <h2>Centralized Logging and Monitoring</h2>
+            <p>This section covers setting up centralized logging and monitoring using rsyslog, a powerful logging system for Linux.</p>
+            <h3>Lab Setup</h3>
+            <p>The network consists of a CentOS 7.0 server and an Ubuntu 18.04 client connected within a private network for centralized logging and monitoring.</p>
+            <table>
+                <tr>
+                    <th>Machine</th>
+                    <th>Operating System</th>
+                    <th>IP Address</th>
+                    <th>Role</th>
+                </tr>
+                <tr>
+                    <td>Server</td>
+                    <td>CentOS 7.0</td>
+                    <td>192.168.57.10/24</td>
+                    <td>Log Server</td>
+                </tr>
+                <tr>
+                    <td>Client</td>
+                    <td>Ubuntu 18.04</td>
+                    <td>192.168.57.11/24</td>
+                    <td>Log Client</td>
+                </tr>
+            </table>
+
+            <h3>Task 1: Search the Linux Logs</h3>
+            <p>As a system administrator, you need to analyze system logs to monitor user activities.</p>
+            <h4>Commands to Search Logs:</h4>
+            <ol>
+                <li>Identify users who used root privileges:
+                    <pre><code>sudo cat /var/log/auth.log | grep "sudo"</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                    <div class="image-placeholder">Image: Example output of auth.log search</div>
+                </li>
+                <li>Find installed or partially installed packages:
+                    <pre><code>cat /var/log/dpkg.log | grep "install"</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                    <div class="image-placeholder">Image: Example output of dpkg.log search</div>
+                </li>
+                <li>List loaded drivers:
+                    <pre><code>lsmod</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                    <div class="image-placeholder">Image: Example output of lsmod</div>
+                </li>
+                <li>Filter SSH service logs:
+                    <pre><code>sudo journalctl -u ssh</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                    <div class="image-placeholder">Image: Example output of SSH logs</div>
+                </li>
+            </ol>
+
+            <h3>Task 2: Implement Centralized Logging using rsyslog</h3>
+            <h4>Step 1: Install rsyslog on Both Machines</h4>
+            <pre><code>sudo apt update && sudo apt install -y rsyslog   # On Ubuntu
+sudo yum install -y rsyslog                      # On CentOS</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of rsyslog installation</div>
+
+            <h4>Step 2: Configure the Log Server (CentOS 7.0)</h4>
+            <ol>
+                <li>Edit the rsyslog configuration file:
+                    <pre><code>sudo nano /etc/rsyslog.conf</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                </li>
+                <li>Uncomment the following lines to allow remote logging:
+                    <pre><code>module(load="imudp")
+input(type="imudp" port="514")
+module(load="imtcp")
+input(type="imtcp" port="514")</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                </li>
+                <li>Restart the rsyslog service:
+                    <pre><code>sudo systemctl restart rsyslog
+sudo systemctl enable rsyslog</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                    <div class="image-placeholder">Image: Example output of rsyslog restart</div>
+                </li>
+            </ol>
+
+            <h4>Step 3: Configure the Log Client (Ubuntu 18.04)</h4>
+            <ol>
+                <li>Edit the client rsyslog configuration file:
+                    <pre><code>sudo nano /etc/rsyslog.d/50-default.conf</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                </li>
+                <li>Add the following line at the end:
+                    <pre><code>*.* @192.168.57.10:514</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                </li>
+                <li>Restart the rsyslog service:
+                    <pre><code>sudo systemctl restart rsyslog</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                    <div class="image-placeholder">Image: Example output of rsyslog client restart</div>
+                </li>
+            </ol>
+
+            <h3>Task 3: Set up a Log Rotation Policy</h3>
+            <h4>Step 1: Edit the Logrotate Configuration</h4>
+            <pre><code>sudo nano /etc/logrotate.d/syslog</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+
+            <h4>Step 2: Add the Following Policy</h4>
+            <pre><code>/var/log/syslog {
+    daily
+    rotate 4
+    size 1M
+    missingok
+    notifempty
+    compress
+    delaycompress
+    postrotate
+        /usr/lib/rsyslog/rsyslog-rotate
+    endscript
+}</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of logrotate configuration</div>
+
+            <h4>Step 3: Test Log Rotation</h4>
+            <pre><code>sudo logrotate -d /etc/logrotate.conf</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of logrotate test</div>
+
+            <h3>Task 4: Set up Logwatch</h3>
+            <h4>Step 1: Install Logwatch</h4>
+            <pre><code>sudo yum install -y logwatch   # On CentOS
+sudo apt install -y logwatch   # On Ubuntu</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of logwatch installation</div>
+
+            <h4>Step 2: Configure Logwatch on the Server (CentOS 7.0)</h4>
+            <ol>
+                <li>Edit the Logwatch configuration:
+                    <pre><code>sudo nano /etc/logwatch/conf/logwatch.conf</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                </li>
+                <li>Set the following:
+                    <pre><code>Output = mail
+MailTo = root
+Detail = High</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                </li>
+                <li>Collect SSH authentication logs daily:
+                    <pre><code>logwatch --service sshd --range today --detail high</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                    <div class="image-placeholder">Image: Example output of logwatch command</div>
+                </li>
+                <li>Schedule Logwatch via cron:
+                    <pre><code>sudo crontab -e</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                    Add this line:
+                    <pre><code>0 0 * * * /usr/sbin/logwatch --output mail</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+                    <div class="image-placeholder">Image: Example output of crontab for logwatch</div>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(button) {
+            const codeBlock = button.previousElementSibling;
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            button.textContent = '✔️';
+            setTimeout(() => {
+                button.textContent = '📋';
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>

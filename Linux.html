@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux Practice Guide</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        a {
+            text-decoration: none;
+            color: #3498db;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: #2ecc71;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #2c3e50;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+        }
+        header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 2px 2px 4px #000;
+        }
+        header p {
+            font-size: 24px;
+            color: #fff;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        /* Container Styles */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .container h2 {
+            font-size: 36px;
+            font-weight: 600;
+            color: #3498db;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        /* Table of Contents Styles */
+        .table-of-contents {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .table-of-contents li {
+            margin: 10px 0;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .table-of-contents li:last-child {
+            border-bottom: none;
+        }
+        .table-of-contents a {
+            font-size: 24px;
+            display: block;
+            color: #2ecc71;
+        }
+        .table-of-contents a i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px auto;
+                padding: 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 36px;
+            }
+            header p {
+                font-size: 18px;
+            }
+            .container h2 {
+                font-size: 24px;
+            }
+            .table-of-contents a {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🚀 Linux Practice Guide 🚀</h1>
+        <p>Welcome to the Linux Practice Guide. Click on a section below to start learning!</p>
+    </header>
+
+    <div class="container">
+        <h2>Table of Contents</h2>
+        <ul class="table-of-contents">
+            <li><a href="part1.html"><i class="fas fa-rocket"></i> Part 1: Local Backup</a></li>
+            <li><a href="part2.html"><i class="fas fa-cloud-upload-alt"></i> Part 2: Remote Backup Using Rsync</a></li>
+            <li><a href="part3.html"><i class="fas fa-camera-retro"></i> Part 3: Create System Snapshot Using Btrfs</a></li>
+            <li><a href="part4.html"><i class="fas fa-chart-line"></i> Part 4: Centralized Logging and Monitoring</a></li>
+            <li><a href="part5.html"><i class="fas fa-lock"></i> Part 5: LUKS Encryption</a></li>
+        </ul>
+    </div>
+
+</body>
+</html>

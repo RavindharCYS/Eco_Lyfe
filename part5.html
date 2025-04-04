@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux Practice Guide - Part 5</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+        }
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+        nav a:hover {
+            background-color: #575757;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #4CAF50;
+        }
+        .copy-btn:hover {
+            color: #45a049;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .image-placeholder {
+            background-color: #ddd;
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🐧 Linux Practice Guide</h1>
+    </header>
+
+    <nav>
+        <a href="part1.html">Local Backup</a>
+        <a href="part2.html">Remote Backup</a>
+        <a href="part3.html">Btrfs Snapshot</a>
+        <a href="part4.html">Centralized Logging</a>
+        <a href="part5.html">LUKS Encryption</a>
+    </nav>
+
+    <div class="container">
+        <div class="section" id="luks-encryption">
+            <h2>LUKS Encryption</h2>
+            <p>This section provides a step-by-step guide for securing data using LUKS encryption, a standard for Linux disk encryption.</p>
+
+            <h3>Practice 1: LUKS Encryption for Data Security</h3>
+            <h4>Step 1: Install Required Packages</h4>
+            <pre><code>apt-get install cryptsetup parted -y</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of package installation</div>
+
+            <h4>Step 2: Check Available Partitions</h4>
+            <pre><code>lsblk</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of lsblk</div>
+
+            <h4>Step 3: Create a Partition (if needed)</h4>
+            <pre><code>parted /dev/sdb -s "mklabel msdos"
+parted /dev/sdb -s "mkpart primary ext4 1MiB 100%"</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of partition creation</div>
+
+            <h4>Step 4: Encrypt the Partition with LUKS</h4>
+            <pre><code>cryptsetup -y -v luksFormat /dev/sdb1</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of LUKS format</div>
+
+            <h4>Step 5: Open the Encrypted Partition</h4>
+            <pre><code>cryptsetup -v luksOpen /dev/sdb1 secure_data</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of LUKS open</div>
+
+            <h4>Step 6: Format the Partition</h4>
+            <pre><code>mkfs.ext4 /dev/mapper/secure_data</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of formatting</div>
+
+            <h4>Step 7: Mount the Partition</h4>
+            <pre><code>mkdir -p /mnt/secure_storage
+mount /dev/mapper/secure_data /mnt/secure_storage</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of mount</div>
+
+            <h4>Step 8: Implement SELinux</h4>
+            <pre><code>apt-get install policycoreutils -y
+restorecon -vvRF /mnt/secure_storage</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of SELinux implementation</div>
+
+            <h4>Step 9: Retrieve LUKS Details</h4>
+            <pre><code>cryptsetup luksDump /dev/sdb1</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of LUKS details</div>
+
+            <h4>Step 10: Add a New Key for Encryption</h4>
+            <pre><code>mkdir /etc/secure_keys
+dd if=/dev/random of=/etc/secure_keys/luks_key bs=32 count=1
+cryptsetup luksAddKey /dev/sdb1 /etc/secure_keys/luks_key -S 1</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of adding LUKS key</div>
+        </div>
+
+        <div class="section">
+            <h3>Practice 2: Install Security Updates</h3>
+            <h4>Step 1: Install Unattended Upgrades</h4>
+            <pre><code>apt update
+apt install unattended-upgrades -y</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of unattended upgrades installation</div>
+
+            <h4>Step 2: Disable Automatic Reboots</h4>
+            <p>Edit <code>/etc/apt/apt.conf.d/50unattended-upgrades</code> and set:</p>
+            <pre><code>Unattended-Upgrade::Automatic-Reboot "false";</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+
+            <h4>Step 3: Upgrade the System</h4>
+            <pre><code>apt upgrade --dry-run  # Check updates
+apt upgrade -y         # Apply updates</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of system upgrade</div>
+
+            <h4>Step 4: Check If a Reboot is Required</h4>
+            <pre><code>ls /var/run/reboot-required</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <p>If necessary, reboot:</p>
+            <pre><code>reboot</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of reboot check</div>
+        </div>
+
+        <div class="section">
+            <h3>Practice 3: Configure a Zone-Based Firewall</h3>
+            <h4>Step 1: Install Firewalld</h4>
+            <pre><code>apt-get install firewalld -y
+systemctl enable firewalld
+systemctl start firewalld</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of firewalld installation</div>
+
+            <h4>Step 2: Assign Interfaces to Zones</h4>
+            <pre><code>firewall-cmd --new-zone=client --permanent
+firewall-cmd --zone=public --change-interface=eth0 --permanent
+firewall-cmd --zone=client --change-interface=eth1 --permanent
+firewall-cmd --reload</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of zone assignment</div>
+
+            <h4>Step 3: Allow Specific Services</h4>
+            <p><strong>Public Zone:</strong></p>
+            <pre><code>firewall-cmd --zone=public --add-service=http --permanent
+firewall-cmd --zone=public --add-service=dhcp --permanent
+firewall-cmd --zone=public --add-service=ssh --permanent
+firewall-cmd --reload</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <p><strong>Client Zone:</strong></p>
+            <pre><code>firewall-cmd --zone=client --add-service=ftp --permanent
+firewall-cmd --reload</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of service allowance</div>
+
+            <h4>Step 4: Restrict Access to Specific IP Ranges</h4>
+            <p><strong>Public Zone:</strong></p>
+            <pre><code>firewall-cmd --zone=public --add-source=192.168.37.10/24 --permanent
+firewall-cmd --reload</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <p><strong>Client Zone:</strong></p>
+            <pre><code>firewall-cmd --zone=client --add-source=192.168.30.10/24 --permanent
+firewall-cmd --reload</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of IP restriction</div>
+
+            <h4>Step 5: Verify Firewall Configuration</h4>
+            <pre><code>firewall-cmd --list-all --zone=public
+firewall-cmd --list-all --zone=client</code><button class="copy-btn" onclick="copyToClipboard(this)">📋</button></pre>
+            <div class="image-placeholder">Image: Example output of firewall configuration</div>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(button) {
+            const codeBlock = button.previousElementSibling;
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            button.textContent = '✔️';
+            setTimeout(() => {
+                button.textContent = '📋';
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>
